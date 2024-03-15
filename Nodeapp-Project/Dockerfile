@@ -1,13 +1,19 @@
 FROM node
 WORKDIR /app
 COPY *.json .
-RUN npm install
 COPY *.js .
 COPY *.png .
 COPY *.ts .
-COPY src/ .
-COPY e2e/ .
+COPY src/ ./src/
+
+COPY .env .
+
+RUN npm install
+
+RUN npx prisma generate
+
 EXPOSE 3000
-CMD [ "npx","nx","server","api" ] 
-# RUN npx prisma generate
-# RUN npx prisma generate
+
+# Command to start the application
+# CMD [ "npm", "run", "start" ]
+CMD ["npx","nx","serve","api"]

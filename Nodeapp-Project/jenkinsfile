@@ -1,0 +1,33 @@
+
+                // sh '''
+                // cd Nodeapp-Project
+                // docker build .
+                // '''
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', changelog: false, poll: false, url: 'https://github.com/pankajdevops2489/new_proj.git'
+            }
+        }
+        stage('Build Docker image') {
+            steps {
+                // Use the dir step with a body containing the Docker commands
+                dir('Nodeapp-Project') {
+                    script {
+                        // Use a script block to wrap Docker commands
+                        docker.withRegistry('https://public.ecr.aws/m5p9n7a0/node-app', '') {
+                            // build image
+                            def customImage = docker.build("node-app:${env.BUILD_ID}")
+
+                            // push image
+                            customImage.push()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

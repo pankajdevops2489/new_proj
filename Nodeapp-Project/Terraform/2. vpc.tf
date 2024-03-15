@@ -35,6 +35,28 @@ resource "aws_subnet" "sub2" {
   map_public_ip_on_launch = true
 }
 
+resource "aws_subnet" "sub3" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.3.0/24"
+  availability_zone = "us-east-1c"
+
+  tags = {
+    Name = "Main"
+  }
+  map_public_ip_on_launch = true
+}
+
+resource "aws_subnet" "sub4" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.0.4.0/24"
+  availability_zone = "us-east-1d"
+
+  tags = {
+    Name = "Main"
+  }
+  map_public_ip_on_launch = true
+}
+
 
 resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.vpc.id
@@ -103,4 +125,24 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6" {
   security_group_id = aws_security_group.my-sg.id
   cidr_ipv6         = "::/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
+}
+
+
+resource "aws_security_group" "my-rds-sg" {
+  name        = "allow_3306"
+  description = "Allow 3306"
+  vpc_id      = aws_vpc.vpc.id
+
+  tags = {
+    Name = "allow_tls"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "allow_3306" {
+  security_group_id = aws_security_group.my-rds-sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 3306
+  ip_protocol       = "tcp"
+  to_port           = 3306
+
 }
