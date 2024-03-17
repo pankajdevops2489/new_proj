@@ -86,7 +86,7 @@ resource "aws_security_group" "my-sg" {
   vpc_id      = aws_vpc.vpc.id
 
   tags = {
-    Name = "allow_http_ssh_5432"
+    Name = "allow_tls"
   }
 }
 
@@ -112,14 +112,6 @@ resource "aws_vpc_security_group_ingress_rule" "allow_8080" {
   from_port         = 8080
   ip_protocol       = "tcp"
   to_port           = 8080
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_5432" {
-  security_group_id = aws_security_group.my-sg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 5432
-  ip_protocol       = "tcp"
-  to_port           = 5432
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
